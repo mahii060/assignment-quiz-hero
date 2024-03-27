@@ -59,7 +59,7 @@ const displayQuiz = (data) => {
   }
 
   data.forEach((quiz, i) => {
-    console.log(quiz, i)
+
     quizContainer.innerHTML += `<div class="m-3 py-3 px-4 shadow-sm rounded">
   <div class="flex items-center">
     <div class="h-8 w-8 bg-green-300 rounded-full flex justify-center items-center text-green-800 mr-3">
@@ -109,75 +109,52 @@ document.querySelector("#submit").addEventListener("click", () => {
   }
 
   // data setting on local storage and getting data from local storage
-  let storage = JSON.parse(localStorage.getItem("result"));
+  let storage = JSON.parse(localStorage.getItem("results"));
+  let newResult = {
+    marks: totalMark,
+    examTime: timeTaken.innerText.replace("sec", ""),
+    status: grade.status,
+  };
   if (storage) {
-    localStorage.setItem(
-      "results",
-      JSON.stringify([
-        ...storage,
-        {
-          marks: totalMark,
-          examTime: timeTaken.innerText,
-          status: grade.status,
-        },
-      ])
-    );
+    // If storage exists, append the new result
+    storage.push(newResult);
+    localStorage.setItem("results", JSON.stringify(storage));
   } else {
-    localStorage.setItem(
-      "results",
-      JSON.stringify([
-        {
-          marks: totalMark,
-          examTime: timeTaken.innerText,
-          status: grade.status,
-        },
-      ])
-    );
+    // If storage does not exist, create a new array with the new result
+    localStorage.setItem("results", JSON.stringify([newResult]));
   }
 
   // Right side bar/ answer section
   let x = setTimeout(() => {
     showAnswers(answers);
-    displayResult.innerHTML = `<div
-    class="h-[220px] w-[220px] mx-auto mt-8 flex flex-col justify-center border-2 rounded-tr-[50%] rounded-bl-[50%]"
-  >
-    <h3 class="text-xl ${grade.color}">${grade.status}</h3>
-    <h1 class="text-3xl font-bold my-2">
-      ${totalMark}<span class="text-slate-800">/60</span>
-    </h1>
-    <p class="text-sm flex justify-center items-center gap-2">
-      Total Time: <span class="text-xl text-orange-500">${timeTaken.innerText.replace(
-      "sec",
-      ""
-    )}<span class="text-xs">sec</span></span>
-    </p>
-  </div>
-  
-  <button onclick="location.reload();" class="bg-green-600 text-white w-full py-2 rounded mt-16">Restart</button>
-  ${storage
-        ? `<div class="mt-5">
-      <h1 class="text-center">Previous Submissions <button class="text-blue-800 text-xs" onclick={localStorage.clear();location.reload()}>Clear History</button></h1>
-    <div
-    class="flex justify-between items-center border rounded p-2 my-2 shadow-sm font-medium">
-    <div>Marks</div>
-    <div>Grade</div>
-    <div>Time</div>
-    </div>
-    ${storage
-          ?.reverse()
-          ?.map(
-            (item) => `<div
-      class="flex justify-between items-center border rounded p-2 my-2 shadow-sm">
-      <div>${item.marks}/60</div>
-      <div>${item.status}</div>
-      <div>${item.examTime}</div>
-      </div>`
-          )
-          ?.join("")}`
-        : ""
-      }
-  </div>
-  `;
+    displayResult.innerHTML = `
+      <div class="h-[220px] w-[220px] mx-auto mt-8 flex flex-col justify-center border-2 rounded-tr-[50%] rounded-bl-[50%]">
+        <h3 class="text-xl ${grade.color}">${grade.status}</h3>
+        <h1 class="text-3xl font-bold my-2">
+          ${totalMark}<span class="text-slate-800">/60</span>
+        </h1>
+        <p class="text-sm flex justify-center items-center gap-2">
+          Total Time: <span class="text-xl text-orange-500">${timeTaken.innerText.replace("sec", "")}<span class="text-xs">sec</span></span>
+        </p>
+        <button onclick="location.reload();" class="bg-green-600 text-white w-full py-2 rounded mt-16">Restart</button>
+      </div>
+        ${storage ? `
+          <div class="mt-5">
+            <h1 class="text-center">Previous Submissions <button class="text-blue-800 text-xs" onclick="localStorage.clear(); location.reload();">Clear History</button></h1> 
+            <div class="flex justify-between items-center border rounded p-2 my-2 shadow-sm font-medium">
+              <div>Marks</div>
+              <div>Grade</div>
+              <div>Time</div>
+            </div>
+            ${storage.reverse().map((item) => `
+              <div class="flex justify-between items-center border rounded p-2 my-2 shadow-sm">
+                <div>${item.marks}/60</div>
+                <div>${item.status}</div>
+                <div>${item.examTime}</div>
+              </div>`).join("")}
+          </div>`
+        : ""}
+      `;
 
     clearTimeout(x);
   }, 1500);
