@@ -136,8 +136,9 @@ document.querySelector("#submit").addEventListener("click", () => {
         <p class="text-sm flex justify-center items-center gap-2">
           Total Time: <span class="text-xl text-orange-500">${timeTaken.innerText.replace("sec", "")}<span class="text-xs">sec</span></span>
         </p>
-        <button onclick="location.reload();" class="bg-green-600 text-white w-full py-2 rounded mt-16">Restart</button>
+
       </div>
+        <button onclick="location.reload();" class="bg-green-600 text-white w-full py-2 rounded mt-16">Restart</button>
         ${storage ? `
           <div class="mt-5">
             <h1 class="text-center">Previous Submissions <button class="text-blue-800 text-xs" onclick="localStorage.clear(); location.reload();">Clear History</button></h1> 
